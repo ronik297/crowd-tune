@@ -1,3 +1,4 @@
+import prisma from "@/app/lib/db";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
@@ -9,11 +10,28 @@ const handler = NextAuth({
         }),
     ],
     callbacks: {
+        async signIn(params) {
+            if(!params.user?.email) {
+                return false;
+            }
+            try {
+                await prisma.user.create({
+                    data: {
+                        email: params.user?.email || "",
+                        provider: "GOOGLE",
+                        name: params.user?.name || "",
+                    }
+                })
+            } catch (error) {
+                console.error("Error creating user:", error);
+            }
+
+            return true;
+        },
         async session({ session, token }) {
             if(session?.user && token?.sub) {
                 session.user.id = token.sub;
             }
-            console.log("Session callback triggered", session, token);
             return session
         }
     }

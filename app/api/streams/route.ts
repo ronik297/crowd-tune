@@ -59,8 +59,7 @@ export async function POST(req: NextRequest, res: NextRequest) {
         });
     } catch (error) {
         return NextResponse.json({
-            message: "Error while adding a stream",
-
+            message: "Error while adding a stream", 
         }, {
             status: 411
         })

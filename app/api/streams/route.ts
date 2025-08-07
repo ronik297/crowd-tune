@@ -46,8 +46,25 @@ export async function POST(req: NextRequest, res: NextRequest) {
             status: 411
         })
     }
+}
 
-
-
-
+export async function GET(req: NextRequest) {
+    try {
+        const creatorId = req.nextUrl.searchParams.get("creatorId");
+        const streams = await prisma.stream.findMany({
+            where: {
+                userId: creatorId ?? ""
+            }
+        })
+        
+        return NextResponse.json({
+            streams,
+        })
+    } catch (error) {
+        return NextResponse.json({
+            message: "Error while fetching streams",
+        }, {
+            status: 500
+        })
+    }
 }
